@@ -275,7 +275,7 @@
     {
         $hits = $this-&gt;container
             -&gt;get('snc_redis.default')
-            -&gt;incr($series-&gt;getId());
+            -&gt;incr('hits');
 
         return array(
             'series' =&gt; $series,
@@ -295,7 +295,7 @@
     {% endfor %}
 &lt;/ul&gt;
 
-{{ hits }} visningar!
+{{ hits }} besökare!
 {% endblock %}</code></pre>
                 </section>
             </section>
