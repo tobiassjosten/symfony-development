@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="sv">
+<head>
+    <meta charset="utf-8">
+
+    <title>Symfony Development</title>
+
+    <meta name="description" content="">
+    <meta name="author" content="Tobias Sjösten">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="css/reveal.min.css">
+    <link rel="stylesheet" href="css/theme/night.css" id="theme">
+    <link rel="stylesheet" href="lib/css/fullscreen-img.css">
+    <link rel="stylesheet" href="css/custom.css">
+
+    <!-- If the query includes 'print-pdf', use the PDF print sheet -->
+    <script>
+        document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+    </script>
+
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <section>
+                <h1>Symfony Development</h1>
+            </section>
+
+            <section>
+                <h2>Tobias Sjösten</h2>
+                <br>
+                <p>@tobiassjosten</p>
+                <br>
+                <p>vvv.tobiassjosten.net</p>
+            </section>
+
+            <section>
+                <section>
+                    <h2>Drupal + Symfony</h2>
+                    <br>
+                    <ul>
+                        <li class="fragment">Crashes more often</li>
+                        <li class="fragment">A lot lazier</li>
+                        <li class="fragment">More competition</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h4>Symfony</h4>
+                    <h2>Crashes more often</h2>
+                </section>
+
+                <section>
+                    <h4>Symfony</h4>
+                    <h2>A lot lazier</h2>
+                </section>
+
+                <section>
+                    <h4>Symfony</h4>
+                    <h2>More competition</h2>
+                </section>
+            </section>
+
+            <section>
+                <h2>Symfony Components</h2>
+                <br>
+                <div class="fragment components">
+                    <!-- Quasi alphabetical order, to clarify the included components. -->
+                    <p class="weak">Browser Kit</p>
+                    <p class="strong">ClassLoader</p>
+                    <p class="weak">Config</p>
+                    <p class="weak">Console</p>
+                    <p class="weak">CSS Selector</p>
+                    <p class="strong">Dependency Injection</p>
+                    <p class="weak">DOM Crawler</p>
+                    <p class="strong">Debug</p>
+                    <p class="weak">Filesystem</p>
+                    <p class="strong">Event Dispatcher</p>
+                    <p class="weak">Finder</p>
+                    <p class="strong">HTTP Foundation</p>
+                    <p class="weak">Form</p>
+                    <p class="strong">HTTP Kernel</p>
+                    <p class="weak">Locale</p>
+                    <p class="strong">Property Access</p>
+                    <p class="weak">Process</p>
+                    <p class="strong">Routing</p>
+                    <p class="weak">Security</p>
+                    <p class="strong">Serializer</p>
+                    <p class="weak">Stopwatch</p>
+                    <p class="strong">Translation</p>
+                    <p class="weak">Templating</p>
+                    <p class="strong">Validator</p>
+                    <p class="weak">Options Resolver</p>
+                    <p class="strong">Yaml</p>
+                </div>
+            </section>
+
+            <section data-state="smartburk">
+                <h2>Smartburk.se</h2>
+            </section>
+
+            <section>
+                <section>
+                    <h2>Routing</h2>
+                    <br>
+                    <pre><code>series_index:
+    path: /tv-serier
+    defaults:
+        _controller: Smartburk:Series:index</code></pre>
+                </section>
+
+                <section>
+                    <h2>Complex routing</h2>
+                    <br>
+                    <pre><code>series_show:
+    path: /tv-serier/{slug}
+    defaults:
+        _controller: Smartburk:Series:show
+    requirements:
+        slug: ^[a-z0-9\-]+\-[0-9]{4}$
+    methods: [GET]</code></pre>
+                    <br>
+                    <pre><code>series_update:
+    path: /tv-serier/{slug}
+    defaults:
+        _controller: Smartburk:Series:update
+    requirements:
+        slug: ^[a-z0-9\-]+\-[0-9]{4}$
+    methods: [PUT, PATCH]</code></pre>
+                </section>
+
+                <section>
+                    <h2>XML routing</h2>
+                    <br>
+                    <pre><code>&lt;route
+    id="series_show"
+    pattern="/tv-serier/{slug}"
+&gt;
+    &lt;default key="_controller"&gt;
+        SmartburkMainBundle:Series:show
+    &lt;/default&gt;
+    &lt;requirement key="slug"&gt;
+        ^[a-z0-9\-]+\-[0-9]{4}$
+    &lt;/requirement&gt;
+&lt;/route&gt;</code></pre>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h2>Controller</h2>
+                    <br>
+                    <pre><code>class SeriesController extends BaseController
+{
+    public function indexAction()
+    {
+        return array(
+            'series' =&gt; $this
+                -&gt;repository('Series')
+                -&gt;findTopFollowed(5)
+            ,
+        );
+    }
+}</code></pre>
+                </section>
+
+                <section>
+                    <h2>Magic controller</h2>
+                    <br>
+                    <pre><code>class SeriesController extends BaseController
+{
+    public function showAction(Series $series)
+    {
+        return array('series' => $series);
+    }
+}</code></pre>
+                </section>
+
+                <section>
+                    <h2>Templating</h2>
+                    <br>
+                    <pre><code>class SeriesController extends BaseController
+{
+    /**
+     * @Template()
+     */
+    public function showAction(Series $series)
+    {
+        return array('series' => $series);
+    }
+}</code></pre>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h2>Twig</h2>
+                    <br>
+                    <pre><code>&lt;h1&gt;Toppserier&lt;/h1&gt;
+&lt;ul&gt;
+    {% for show in series %}
+    &lt;li&gt;{{ show.title }} ({{ show.year}})&lt;/li&gt;
+    {% endfor %}
+&lt;/ul&gt;</code></pre>
+                </section>
+
+                <section>
+                    <h2>Twig</h2>
+                    <br>
+                    <pre><code>{% extends 'layout.html.twig' %}
+
+{% block title %}Toppserier{% endblock %}
+
+{% block content %}
+&lt;ul&gt;
+    {% for show in series %}
+    &lt;li&gt;{{ show.title }} ({{ show.year}})&lt;/li&gt;
+    {% endfor %}
+&lt;/ul&gt;
+{% endblock %}</code></pre>
+                </section>
+
+                <section>
+                    <h2>Twig</h2>
+                    <br>
+                    <pre><code>&lt;html&gt;
+    &lt;!-- Metadata, stylesheets, etc --&gt;
+&lt;body&gt;
+    &lt;h1&gt;{% block title %}{% endblock %}&lt;/h1&gt;
+
+    {% block content %}{% endblock %}
+
+    &lt;!-- Scripts, etc --&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+                </section>
+            </section>
+
+            <section>
+                <h2>Bundles</h2>
+            </section>
+
+            <section>
+                <section>
+                    <h2>Add a counter</h2>
+                    <br>
+                    <pre><code>$ composer require snc/redis-bundle</code></pre>
+                </section>
+
+                <section>
+                    <h2>Add a counter</h2>
+                    <br>
+                    <pre><code>snc_redis:
+    clients:
+        default:
+            type: predis
+            alias: default
+            dsn: redis://localhost</code></pre>
+                </section>
+
+                <section>
+                    <h2>Add a counter</h2>
+                    <br>
+                    <pre><code>class SeriesController extends BaseController
+{
+    public function showAction(Series $series)
+    {
+        $hits = $this-&gt;container
+            -&gt;get('snc_redis.default')
+            -&gt;incr($series-&gt;getId());
+
+        return array(
+            'series' =&gt; $series,
+            'hits' =&gt; $hits,
+        );
+    }
+}</code></pre>
+                </section>
+
+                <section>
+                    <h2>Add a counter</h2>
+                    <br>
+                    <pre><code>{% block content %}
+&lt;ul&gt;
+    {% for show in series %}
+    &lt;li&gt;{{ show.title }} ({{ show.year}})&lt;/li&gt;
+    {% endfor %}
+&lt;/ul&gt;
+
+{{ hits }} visningar!
+{% endblock %}</code></pre>
+                </section>
+            </section>
+
+            <section>
+                <h2>Get it on!</h2>
+            </section>
+
+            <section>
+                <h1>kthxbye!</h1>
+                <br><br>
+                <h2>@tobiassjosten</h2>
+            </section>
+        </div>
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.min.js"></script>
+
+    <script>
+        // Full list of configuration options available here:
+        // https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize({
+            controls: true,
+            progress: true,
+            history: true,
+            center: true,
+
+            theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+            transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+            // Optional libraries used to extend on reveal.js
+            dependencies: [
+                { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+                { src: 'plugin/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+                { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+                { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+                { src: 'lib/js/fullscreen-img.js' },
+                // { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+            ]
+        });
+    </script>
+</body>
+</html>

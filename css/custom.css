@@ -1,0 +1,44 @@
+.reveal .progress {
+    height: 12px;
+}
+
+.smartburk .reveal .state-background {
+    background: #525C5E;
+}
+
+.columns {
+    -moz-column-count: 3;
+    -moz-column-gap: 20px;
+    -webkit-column-count: 3;
+    -webkit-column-gap: 20px;
+}
+
+.components {
+    -moz-column-count: 4;
+    -moz-column-gap: 20px;
+    -webkit-column-count: 4;
+    -webkit-column-gap: 20px;
+}
+
+.strong {
+    font-weight: bold;
+}
+
+.weak {
+    color: #666;
+}
+
+pre {
+    background: transparent !important;
+    box-shadow: none !important;
+    font-size: 1em !important;
+    margin: 0 !important;
+    overflow-y: hidden;
+    padding: 0 !important;
+}
+
+pre code {
+    background: transparent !important;
+    color: #CCC;
+    overflow-y: hidden;
+}
